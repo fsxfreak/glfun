@@ -31,3 +31,8 @@ void Program::use() const
 {
 	glUseProgram(id);
 }
+
+GLuint Program::getID() const
+{
+	return id;
+}

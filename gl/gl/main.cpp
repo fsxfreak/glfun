@@ -13,6 +13,7 @@ int main()
 	Engine engine(800, 600);
 	std::shared_ptr<State> state = std::make_shared<State>();
 	engine.setActiveState(state);
+
 	engine.loop();
 
 	glfwTerminate();

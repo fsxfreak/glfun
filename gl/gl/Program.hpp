@@ -15,6 +15,7 @@ public:
 	Program(const std::string& vertex = "test.vert", const std::string& fragment = "test.frag");
 
 	void use() const;
+	GLuint getID() const;
 private:
 	GLuint id;
 };
