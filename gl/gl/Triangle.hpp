@@ -8,22 +8,25 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-struct Vector3
-{
-	GLfloat x;
-	GLfloat y;
-	GLfloat z;
-
-	Vector3(GLfloat x, GLfloat y, GLfloat z) : x(x), y(y), z(z) {}
-};
-
 class Triangle : public Primitive
 {
 public:
-	Triangle(const std::array<Vector3, 3>& pos, Vector3 rgb);
-	Triangle(const std::array<Vector3, 3>& pos, const std::array<Vector3, 3>& rgb);
+	static const unsigned int NUM_VERTS = 3;
+	static const int STRIDE = 6;
+	static const int SIZE = STRIDE * NUM_VERTS;
+
+	Triangle(const std::array<Vector3, NUM_VERTS>& pos, Vector3 rgb);
+	Triangle(const std::array<Vector3, NUM_VERTS>& pos, const std::array<Vector3, NUM_VERTS>& rgb);
 
 	virtual void draw();
+
+	void setColor(Vector3 rgb, unsigned int index);
+	void setPosition(Vector3 pos, unsigned int index);
+	Vector3 getColor(unsigned int index) const;
+	Vector3 getPosition(unsigned int index) const;
+private:
+	GLfloat vertData[SIZE];
+
 };
 
 #endif
