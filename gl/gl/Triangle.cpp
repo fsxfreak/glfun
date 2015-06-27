@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-Triangle::Triangle(const std::array<Vector3, NUM_VERTS>& pos, Vector3 rgb)
-	: Triangle(pos, { rgb, rgb, rgb })
+Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
+	: Triangle(pos, std::array<glm::vec3, 3>({ rgb, rgb, rgb }))
 {
 
 }
 
-Triangle::Triangle(const std::array<Vector3, NUM_VERTS>& pos, const std::array<Vector3, NUM_VERTS>& rgb)
+Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array<glm::vec3, NUM_VERTS>& rgb)
 	: Primitive()
 {
 	for (unsigned int i = 0; i < pos.size(); i++)
@@ -39,13 +39,20 @@ Triangle::Triangle(const std::array<Vector3, NUM_VERTS>& pos, const std::array<V
 
 void Triangle::draw()
 {
+	glm::mat4 trans;
+	trans = glm::rotate(trans, static_cast<GLfloat>(glfwGetTime()) * 90.0f, glm::vec3(0.0f, 0.7f, 1.0f));
+	trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
+	GLuint transformLoc = glGetUniformLocation(program.getID(), "transform");
+	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
 	program.use();
 	glBindVertexArray(vaoID);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
 
-void Triangle::setColor(Vector3 rgb, unsigned int index)
+void Triangle::setColor(glm::vec3 rgb, unsigned int index)
 {
 	if (index > NUM_VERTS) return;
 
@@ -61,7 +68,7 @@ void Triangle::setColor(Vector3 rgb, unsigned int index)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Triangle::setPosition(Vector3 pos, unsigned int index)
+void Triangle::setPosition(glm::vec3 pos, unsigned int index)
 {
 	if (index > NUM_VERTS) return;
 
@@ -77,7 +84,7 @@ void Triangle::setPosition(Vector3 pos, unsigned int index)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Vector3 Triangle::getColor(unsigned int index) const
+glm::vec3 Triangle::getColor(unsigned int index) const
 {
 	if (index > NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
 	
@@ -88,7 +95,7 @@ Vector3 Triangle::getColor(unsigned int index) const
 	};
 }
 
-Vector3 Triangle::getPosition(unsigned int index) const
+glm::vec3 Triangle::getPosition(unsigned int index) const
 {
 	if (index > NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
 

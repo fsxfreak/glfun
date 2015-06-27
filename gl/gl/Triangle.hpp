@@ -15,15 +15,15 @@ public:
 	static const int STRIDE = 6;
 	static const int SIZE = STRIDE * NUM_VERTS;
 
-	Triangle(const std::array<Vector3, NUM_VERTS>& pos, Vector3 rgb);
-	Triangle(const std::array<Vector3, NUM_VERTS>& pos, const std::array<Vector3, NUM_VERTS>& rgb);
+	Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb);
+	Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array<glm::vec3, NUM_VERTS>& rgb);
 
 	virtual void draw();
 
-	void setColor(Vector3 rgb, unsigned int index);
-	void setPosition(Vector3 pos, unsigned int index);
-	Vector3 getColor(unsigned int index) const;
-	Vector3 getPosition(unsigned int index) const;
+	void setColor(glm::vec3 rgb, unsigned int index);
+	void setPosition(glm::vec3 pos, unsigned int index);
+	glm::vec3 getColor(unsigned int index) const;
+	glm::vec3 getPosition(unsigned int index) const;
 private:
 	GLfloat vertData[SIZE];
 
