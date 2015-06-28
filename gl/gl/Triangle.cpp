@@ -37,14 +37,22 @@ Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Triangle::draw()
+void Triangle::draw(glm::mat4 view) const
 {
-	glm::mat4 trans;
-	trans = glm::rotate(trans, static_cast<GLfloat>(glfwGetTime()) * 90.0f, glm::vec3(0.0f, 0.7f, 1.0f));
-	trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+	glm::mat4 model;
+	model = glm::rotate(model, 45.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-	GLuint transformLoc = glGetUniformLocation(program.getID(), "transform");
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+	glm::mat4 projection;
+	projection = glm::perspective(60.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+
+	GLuint modelLoc = glGetUniformLocation(program.getID(), "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+	GLuint viewLoc = glGetUniformLocation(program.getID(), "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+	GLuint projectionLoc = glGetUniformLocation(program.getID(), "projection");
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	program.use();
 	glBindVertexArray(vaoID);

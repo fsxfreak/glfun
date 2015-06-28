@@ -18,7 +18,7 @@ public:
 	Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb);
 	Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array<glm::vec3, NUM_VERTS>& rgb);
 
-	virtual void draw();
+	virtual void draw(glm::mat4 view) const;
 
 	void setColor(glm::vec3 rgb, unsigned int index);
 	void setPosition(glm::vec3 pos, unsigned int index);

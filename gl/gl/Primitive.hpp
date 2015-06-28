@@ -17,7 +17,7 @@ class Primitive
 public:
 	Primitive();
 
-	virtual void draw() = 0;
+	virtual void draw(glm::mat4 view) const = 0;
 	virtual void setColor(glm::vec3 rgb, unsigned int index) = 0;
 	virtual void setPosition(glm::vec3 pos, unsigned int index) = 0;
 	virtual glm::vec3 getColor(unsigned int index) const = 0;
