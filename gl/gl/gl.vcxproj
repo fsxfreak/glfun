@@ -70,6 +70,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="State.cpp" />
@@ -79,6 +80,7 @@
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="Primitive.hpp" />
     <ClInclude Include="State.hpp" />

@@ -29,6 +29,8 @@ Engine::Engine(int width, int height)
 
 	glViewport(0, 0, width, height);
 
+	glEnable(GL_DEPTH_TEST);
+
 	glfwSetWindowUserPointer(window, this);
 	auto callback = [] (GLFWwindow* window, int key, int scancode, int action, int mode) {
 		static_cast<Engine*>(glfwGetWindowUserPointer(window))->keyPressed(
@@ -60,7 +62,7 @@ void Engine::loop()
 		glfwPollEvents();
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		activeState->drawScene();
 
