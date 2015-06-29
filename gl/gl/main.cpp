@@ -10,8 +10,9 @@
 
 int main()
 {
-	Engine engine(800, 600);
-	std::shared_ptr<State> state = std::make_shared<State>();
+	InputManager input;
+	Engine engine(800, 600, &input);
+	std::shared_ptr<State> state = std::make_shared<State>(&input);
 	engine.setActiveState(state);
 
 	engine.loop();

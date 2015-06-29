@@ -2,6 +2,7 @@
 #define STATE_HPP
 
 #include "Camera.hpp"
+#include "InputManager.hpp"
 #include "Primitive.hpp"
 
 #include <memory>
@@ -10,12 +11,12 @@
 class State
 {
 public:
-	State();
+	State(InputManager* input);
 
 	static const glm::vec3 UP;
 
 	void constructScene();
-	void drawScene();
+	void drawScene(double delta);
 private:
 	std::vector<std::shared_ptr<Primitive>> primitives;
 

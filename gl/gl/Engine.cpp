@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Engine::Engine(int width, int height)
+Engine::Engine(int width, int height, InputManager *input) : input(input)
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -19,6 +19,7 @@ Engine::Engine(int width, int height)
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
@@ -31,23 +32,25 @@ Engine::Engine(int width, int height)
 
 	glEnable(GL_DEPTH_TEST);
 
-	glfwSetWindowUserPointer(window, this);
-	auto callback = [] (GLFWwindow* window, int key, int scancode, int action, int mode) {
-		static_cast<Engine*>(glfwGetWindowUserPointer(window))->keyPressed(
+	glfwSetWindowUserPointer(window, input);
+	auto keyCallback = [] (GLFWwindow* window, int key, int scancode, int action, int mode) {
+		static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyPressed(
 			window, key, scancode, action, mode);
 	};
-	glfwSetKeyCallback(window, callback);
+	glfwSetKeyCallback(window, keyCallback);
+	auto mouseCallback = [] (GLFWwindow* window, double xpos, double ypos) {
+		static_cast<InputManager*>(glfwGetWindowUserPointer(window))->mouseMoved(
+			window, xpos, ypos);
+	};
+	glfwSetCursorPosCallback(window, mouseCallback);
+
+	auto close = [&]() { glfwSetWindowShouldClose(window, GL_TRUE); };
+	input->bind(GLFW_KEY_ESCAPE, close);
 }
 
 Engine::~Engine()
 {
 	glfwTerminate();
-}
-
-void Engine::keyPressed(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
 void Engine::setActiveState(std::shared_ptr<State> other)
@@ -59,12 +62,17 @@ void Engine::loop()
 {
 	while (!glfwWindowShouldClose(window))
 	{
+		double timeNow = glfwGetTime();
+		double delta = timeNow - lastTime;
+		lastTime = timeNow;
+
 		glfwPollEvents();
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		activeState->drawScene();
+		input->update();
+		activeState->drawScene(delta);
 
 		glfwSwapBuffers(window);
 	}

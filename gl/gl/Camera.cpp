@@ -2,20 +2,38 @@
 
 #include "State.hpp"
 
-Camera::Camera() : pos({ 0.0f, 0.0f, 3.0f }) {}
-
-void Camera::update()
+Camera::Camera(InputManager *input) : pos({ 0.0f, 0.0f, 3.0f }), front({ 0.0f, 0.0f, -1.0f }), SPEED(1.5f) 
 {
-	pos.x = 3 * cos(glfwGetTime());
-	pos.z = 3 * sin(glfwGetTime());
+	input->bind(GLFW_KEY_W, 
+		[&]() {
+			pos += speedAdjusted * front;
+		}
+	);
+	input->bind(GLFW_KEY_A,
+		[&]() {
+			pos -= speedAdjusted * glm::normalize(glm::cross(front, State::UP));
+		}
+	);
+	input->bind(GLFW_KEY_S,
+		[&]() {
+			pos -= speedAdjusted * front;
+		}
+	);
+	input->bind(GLFW_KEY_D,
+		[&]() {
+			pos += speedAdjusted * glm::normalize(glm::cross(front, State::UP));
+		}
+	);
+}
 
-	glm::vec3 target = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 dir = glm::normalize(pos - target);
+void Camera::update(double delta)
+{
+	front.x = cos(glm::radians(0.0f)) * cos(glm::radians(4.0f));
+	front.y = sin(glm::radians(0.0f));
+	front.z = cos(glm::radians(0.0f)) * sin(glm::radians(4.0f));
 
-	glm::vec3 cameraRight = glm::normalize(glm::cross(State::UP, dir));
-	glm::vec3 cameraUp = glm::cross(dir, cameraRight);
-
-	view = glm::lookAt(pos, target, State::UP);
+	view = glm::lookAt(pos, pos + front, State::UP);
+	speedAdjusted = SPEED * delta;
 }
 
 glm::mat4 Camera::getView() const { return view; }
