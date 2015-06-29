@@ -27,6 +27,9 @@ public:
 private:
 	GLfloat vertData[SIZE];
 
+	GLuint modelUniform;
+	GLuint viewUniform;
+	GLuint projectionUniform;
 };
 
 #endif
