@@ -37,9 +37,9 @@ void State::drawScene(double delta)
 		GLfloat blue = static_cast<float>(sin(glfwGetTime() + 3.1415f / 2)) / 2 + 0.5f;
 		GLfloat green = static_cast<float>(sin(glfwGetTime())) / 2 + 0.5f;
 		GLfloat red = static_cast<float>(sin(glfwGetTime() - 3.1415f / 2)) / 2 + 0.5f;
-		e->setColor({ blue, 0.0f, 0.0f }, 0);
-		e->setColor({ green, 0.0f, 0.0f }, 1);
-		e->setColor({ red, 0.0f, 0.0f }, 2); 
+		e->setColor({ 0.1f, 0.2f, blue }, 0);
+		e->setColor({ 0.2f, green, 0.1f }, 1);
+		e->setColor({ red, 0.1f, 0.2f }, 2); 
 
 		e->draw(camera.getView());
 	}

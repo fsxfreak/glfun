@@ -1,6 +1,7 @@
 #include "InputManager.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 void InputManager::keyPressed(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -17,12 +18,28 @@ void InputManager::keyPressed(GLFWwindow* window, int key, int scancode, int act
 
 void InputManager::mouseMoved(GLFWwindow* window, double xpos, double ypos)
 {
+	//starting condition, so camera doesn't snap somewhere random
+	if (lastX == -1.0 || lastY == -1.0)
+	{
+		lastX = xpos;
+		lastY = ypos;
+	}
 
+	diffX = xpos - lastX;
+	diffY = lastY - ypos;
+
+	lastX = xpos;
+	lastY = ypos;
 }
 
-void InputManager::bind(int key, std::function<void()> func)
+void InputManager::bind(int key, std::function<void()> keyFunc)
 {
-	callbacks[key] = func;
+	keyCallbacks[key] = keyFunc;
+}
+
+void InputManager::bind(std::function<void(double, double)> mouseFunc)
+{
+	mouseCallback = mouseFunc;
 }
 
 void InputManager::update()
@@ -33,7 +50,7 @@ void InputManager::update()
 	 * through a constant 512 booleans?
 	 * Will have to benchmark this in the future if performance becomes an issue.
 	 */
-	std::for_each(callbacks.begin(), callbacks.end()
+	std::for_each(keyCallbacks.begin(), keyCallbacks.end()
 		, [&] (const std::pair<int, std::function<void()>>& e) {
 			if (keyStates[e.first])
 			{
@@ -41,4 +58,10 @@ void InputManager::update()
 			}
 		}
 	);
+
+	if (std::abs(diffX) > 0.33 || std::abs(diffY) > 0.33)
+	{
+		mouseCallback(diffX, diffY);
+		diffX = diffY = 0;
+	}
 }

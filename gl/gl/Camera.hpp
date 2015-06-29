@@ -19,12 +19,16 @@ public:
 	glm::mat4 getView() const;
 private:
 	glm::vec3 pos;
-	glm::vec3 front;
-
-	glm::mat4 view;
-
 	const GLfloat SPEED;
 	GLfloat speedAdjusted;
+
+	glm::vec3 front;
+	double yaw;
+	double pitch;
+
+	const double MOUSE_SENSITIVITY = 0.5;
+
+	glm::mat4 view;
 };
 
 #endif
