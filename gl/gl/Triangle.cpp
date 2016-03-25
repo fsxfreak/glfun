@@ -1,8 +1,6 @@
 #include "Triangle.hpp"
 #include "Engine.hpp"
 
-#include <iostream>
-
 Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
     : Triangle(pos, std::array<glm::vec3, 3>({ rgb, rgb, rgb }))
 {
@@ -51,7 +49,7 @@ Triangle::~Triangle()
 void Triangle::draw(glm::mat4 view) const
 {
     glm::mat4 model;
-    model = glm::rotate(model, 45.0f * static_cast<GLfloat>(glfwGetTime()), glm::vec3(1.0f, 0.0f, 0.0f));
+    //model = glm::rotate(model, 45.0f * static_cast<GLfloat>(glfwGetTime()), glm::vec3(1.0f, 0.0f, 0.0f));
 
     glm::mat4 projection;
     projection = glm::perspective(60.0f, static_cast<float>(Engine::width) / Engine::height, 0.1f, 100.0f);
@@ -62,13 +60,13 @@ void Triangle::draw(glm::mat4 view) const
 
     program.use();
     glBindVertexArray(vaoID);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
 }
 
 void Triangle::setColor(glm::vec3 rgb, unsigned int index)
 {
-    if (index > NUM_VERTS) return;
+    if (index >= NUM_VERTS) return;
 
     vertData[STRIDE * index + 3] = rgb.x;
     vertData[STRIDE * index + 4] = rgb.y;
@@ -84,7 +82,7 @@ void Triangle::setColor(glm::vec3 rgb, unsigned int index)
 
 void Triangle::setPosition(glm::vec3 pos, unsigned int index)
 {
-    if (index > NUM_VERTS) return;
+    if (index >= NUM_VERTS) return;
 
     vertData[STRIDE * index + 0] = pos.x;
     vertData[STRIDE * index + 1] = pos.y;
@@ -100,7 +98,7 @@ void Triangle::setPosition(glm::vec3 pos, unsigned int index)
 
 glm::vec3 Triangle::getColor(unsigned int index) const
 {
-    if (index > NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
+    if (index >= NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
     
     return {
         vertData[STRIDE * index + 3],
@@ -111,7 +109,7 @@ glm::vec3 Triangle::getColor(unsigned int index) const
 
 glm::vec3 Triangle::getPosition(unsigned int index) const
 {
-    if (index > NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
+    if (index >= NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
 
     return{
         vertData[STRIDE * index + 0],

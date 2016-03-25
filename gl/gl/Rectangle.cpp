@@ -1,6 +1,9 @@
 #include "Rectangle.hpp"
+#include "Engine.hpp"
+#include <iostream>
 
 Rectangle::Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
+    : Primitive()
 {
     for (unsigned int i = 0; i < pos.size(); i++)
     {
@@ -12,6 +15,7 @@ Rectangle::Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
         vertData[STRIDE * i + 4] = rgb.y;
         vertData[STRIDE * i + 5] = rgb.z;
     }
+    indices = { 0, 1, 2, 2, 3, 0 };
 
     glGenVertexArrays(1, &vaoID);
     glGenBuffers(1, &vboID);
@@ -19,7 +23,9 @@ Rectangle::Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
 
     glBindVertexArray(vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-            glBufferData(GL_ARRAY_BUFFER, vertData.size(), vertData.data(), GL_STATIC_DRAW);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), indices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertData.size(), vertData.data(), GL_STATIC_DRAW);
 
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE * sizeof(float), (GLvoid*)0);
@@ -27,15 +33,11 @@ Rectangle::Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, STRIDE * sizeof(float), (GLvoid*)(3 * sizeof(float)));
     glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-
-    // bottom left, bottom right, top right, top left.
-    std::array<unsigned int, 6> indices = { 0, 1, 3, 3, 1, 2 };
-
-    // indices for drawing 6 vertices from 4.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), indices.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    modelUniform = glGetUniformLocation(program.getID(), "model");
+    viewUniform = glGetUniformLocation(program.getID(), "view");
+    projectionUniform = glGetUniformLocation(program.getID(), "projection");
 }
 
 Rectangle::~Rectangle()
@@ -47,12 +49,25 @@ Rectangle::~Rectangle()
 
 void Rectangle::draw(glm::mat4 view) const
 {
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    glm::mat4 model;
+
+    glm::mat4 projection;
+    projection = glm::perspective(60.0f, static_cast<float>(Engine::width) / Engine::height, 0.1f, 100.0f);
+
+    glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
+
+    program.use();
+    glBindVertexArray(vaoID);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+    
 }
 
 void Rectangle::setColor(glm::vec3 rgb, unsigned int index)
 {
-    if (index > NUM_VERTS) return;
+    if (index >= NUM_VERTS) return;
 
     vertData[STRIDE * index + 3] = rgb.x;
     vertData[STRIDE * index + 4] = rgb.y;
@@ -89,7 +104,7 @@ void Rectangle::setPosition(glm::vec3 pos, unsigned int index)
 
 glm::vec3 Rectangle::getColor(unsigned int index) const
 {
-    if (index > NUM_VERTS) { return glm::vec3(); }
+    if (index >= NUM_VERTS) { return glm::vec3(); }
 
     return {
         vertData[index * STRIDE + 3],
@@ -100,7 +115,7 @@ glm::vec3 Rectangle::getColor(unsigned int index) const
 
 glm::vec3 Rectangle::getPosition(unsigned int index) const
 {
-    if (index > NUM_VERTS) { return glm::vec3(); }
+    if (index >= NUM_VERTS) { return glm::vec3(); }
 
     return{
         vertData[index * STRIDE + 0],

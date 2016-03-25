@@ -28,6 +28,7 @@ public:
 
 private:
     std::array<GLfloat, SIZE> vertData;
+    std::array<GLuint, 6> indices;
 
     GLuint eboID;
 

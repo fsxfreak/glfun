@@ -4,8 +4,8 @@
 #include <iostream>
 
 Camera::Camera(InputManager *input) 
-    : pos({ 3.0f, 0.0f, 3.0f }), SPEED(1.5f), speedAdjusted(0.0f)
-    , front({ -1.0f, 0.0f, -1.0f }), yaw(0.0), pitch(0.0)
+    : pos({ 3.0f, 3.0f, 3.0f }), SPEED(1.5f), speedAdjusted(0.0f)
+    , front({ -1.0f, -1.0f, -1.0f }), yaw(0.0), pitch(0.0)
 {
     front = glm::normalize(front);
 
