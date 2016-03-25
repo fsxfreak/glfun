@@ -6,7 +6,6 @@
 #include <memory>
 
 #include "Engine.hpp"
-#include "Triangle.hpp"
 
 int main()
 {

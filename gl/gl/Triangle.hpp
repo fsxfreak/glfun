@@ -10,26 +10,28 @@
 
 class Triangle : public Primitive
 {
-public:
-	static const unsigned int NUM_VERTS = 3;
-	static const int STRIDE = 6;
-	static const int SIZE = STRIDE * NUM_VERTS;
-
-	Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb);
-	Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array<glm::vec3, NUM_VERTS>& rgb);
-
-	virtual void draw(glm::mat4 view) const;
-
-	void setColor(glm::vec3 rgb, unsigned int index);
-	void setPosition(glm::vec3 pos, unsigned int index);
-	glm::vec3 getColor(unsigned int index) const;
-	glm::vec3 getPosition(unsigned int index) const;
 private:
-	GLfloat vertData[SIZE];
+    const static unsigned int NUM_VERTS = 3;
+    const static unsigned int STRIDE = 6;
+    const static unsigned int SIZE = NUM_VERTS * STRIDE;
 
-	GLuint modelUniform;
-	GLuint viewUniform;
-	GLuint projectionUniform;
+public:
+    Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb);
+    Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array<glm::vec3, NUM_VERTS>& rgb);
+    ~Triangle();
+
+    virtual void draw(glm::mat4 view) const;
+
+    void setColor(glm::vec3 rgb, unsigned int index);
+    void setPosition(glm::vec3 pos, unsigned int index);
+    glm::vec3 getColor(unsigned int index) const;
+    glm::vec3 getPosition(unsigned int index) const;
+private:
+    GLfloat vertData[SIZE];
+
+    GLuint modelUniform;
+    GLuint viewUniform;
+    GLuint projectionUniform;
 };
 
 #endif

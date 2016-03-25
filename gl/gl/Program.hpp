@@ -12,12 +12,13 @@
 class Program
 {
 public:
-	Program(const std::string& vertex = "test.vert", const std::string& fragment = "test.frag");
+    Program(const std::string& vertex = "test.vert", const std::string& fragment = "test.frag");
+    ~Program();
 
-	void use() const;
-	GLuint getID() const;
+    void use() const;
+    GLuint getID() const;
 private:
-	GLuint id;
+    GLuint id;
 };
 
 #endif

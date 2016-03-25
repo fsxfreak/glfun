@@ -15,18 +15,22 @@
 class Primitive
 {
 public:
-	Primitive();
+    Primitive();
 
-	virtual void draw(glm::mat4 view) const = 0;
-	virtual void setColor(glm::vec3 rgb, unsigned int index) = 0;
-	virtual void setPosition(glm::vec3 pos, unsigned int index) = 0;
-	virtual glm::vec3 getColor(unsigned int index) const = 0;
-	virtual glm::vec3 getPosition(unsigned int index) const = 0;
-	virtual void setProgram(const std::string& vertex, const std::string& fragment);
+    virtual void draw(glm::mat4 view) const = 0;
+    virtual void setColor(glm::vec3 rgb, unsigned int index) = 0;
+    virtual void setPosition(glm::vec3 pos, unsigned int index) = 0;
+    virtual glm::vec3 getColor(unsigned int index) const = 0;
+    virtual glm::vec3 getPosition(unsigned int index) const = 0;
+    virtual void setProgram(const std::string& vertex, const std::string& fragment);
 protected:
-	GLuint vaoID;
-	GLuint vboID;
-	Program program;
+    GLuint vaoID;
+    GLuint vboID;
+    Program program;
+
+    const static unsigned int NUM_VERTS = 3;
+    const static unsigned int STRIDE = 6;
+    const static unsigned int SIZE = NUM_VERTS * STRIDE;
 };
 
 #endif
