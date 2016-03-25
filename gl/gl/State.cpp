@@ -26,13 +26,9 @@ void State::constructScene()
             , { 0.0f, 0.0f, 0.0f }
         })
     );
+    primitives.push_back(tri);
 
-    std::array<glm::vec3, 4> rectangleVertices = { {
-            glm::vec3(-1.0f, -1.0f, 0.0f)
-          , glm::vec3(1.0f, -1.0f, 0.0f)
-          , glm::vec3(1.0f, 1.0f, 0.0f)
-          , glm::vec3(-1.0f, 1.0f, 0.0f)
-        } };
+    /*
     std::shared_ptr<Rectangle> rect = std::make_shared<Rectangle>(Rectangle({
         {{ 
             glm::vec3(-1.0f, -1.0f, 0.0f)
@@ -42,7 +38,7 @@ void State::constructScene()
         }}
       , { 1.0f, 1.0f, 1.0f }
     }));
-    primitives.push_back(tri);
+    */
 }
 
 void State::drawScene(double delta)

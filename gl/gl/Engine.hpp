@@ -12,20 +12,23 @@
 class Engine
 {
 public:
-	Engine(int width, int height, InputManager *input);
-	~Engine();
+    static unsigned int width;
+    static unsigned int height;
 
-	void setActiveState(std::shared_ptr<State> state);
+    Engine(int width, int height, InputManager *input);
+    ~Engine();
 
-	void loop();
+    void setActiveState(std::shared_ptr<State> state);
+
+    void loop();
 private:
-	//using raw ptr because glfwTerminate is responsible for destruction
-	GLFWwindow *window;
-	std::shared_ptr<State> activeState;
+    //using raw ptr because glfwTerminate is responsible for destruction
+    GLFWwindow *window;
+    std::shared_ptr<State> activeState;
 
-	InputManager *input;
+    InputManager *input;
 
-	double lastTime;
+    double lastTime;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "Triangle.hpp"
+#include "Engine.hpp"
 
 #include <iostream>
 
@@ -43,17 +44,17 @@ Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array
 
 Triangle::~Triangle()
 {
-    glDeleteProgram(program);
-
+    glDeleteBuffers(1, &vboID);
+    glDeleteVertexArrays(1, &vaoID);
 }
 
 void Triangle::draw(glm::mat4 view) const
 {
     glm::mat4 model;
-    //model = glm::rotate(model, 45.0f * static_cast<GLfloat>(glfwGetTime()), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, 45.0f * static_cast<GLfloat>(glfwGetTime()), glm::vec3(1.0f, 0.0f, 0.0f));
 
     glm::mat4 projection;
-    projection = glm::perspective(60.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+    projection = glm::perspective(60.0f, static_cast<float>(Engine::width) / Engine::height, 0.1f, 100.0f);
 
     glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));

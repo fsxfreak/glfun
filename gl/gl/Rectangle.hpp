@@ -17,6 +17,7 @@ private:
 
 public:
     Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb);
+    ~Rectangle();
 
     virtual void draw(glm::mat4 view) const;
     virtual void setColor(glm::vec3 rgb, unsigned int index);

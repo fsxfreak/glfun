@@ -2,7 +2,7 @@
 
 Rectangle::Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
 {
-    for (int i = 0; i < pos.size(); i++)
+    for (unsigned int i = 0; i < pos.size(); i++)
     {
         vertData[STRIDE * i] = pos[i].x;
         vertData[STRIDE * i + 1] = pos[i].y;
@@ -15,12 +15,34 @@ Rectangle::Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
 
     glGenVertexArrays(1, &vaoID);
     glGenBuffers(1, &vboID);
+    glGenBuffers(1, &eboID);
 
     glBindVertexArray(vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-            glBufferData(GL_ARRAY_BUFFER, vertData.size(), vertData.data, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vertData.size(), vertData.data(), GL_STATIC_DRAW);
+
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE * sizeof(float), (GLvoid*)0);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, STRIDE * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+    glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
+    // bottom left, bottom right, top right, top left.
+    std::array<unsigned int, 6> indices = { 0, 1, 3, 3, 1, 2 };
+
+    // indices for drawing 6 vertices from 4.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+Rectangle::~Rectangle()
+{
+    glDeleteBuffers(1, &eboID);
+    glDeleteBuffers(1, &vboID);
+    glDeleteVertexArrays(1, &vaoID);
 }
 
 void Rectangle::draw(glm::mat4 view) const
