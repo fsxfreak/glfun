@@ -8,7 +8,7 @@ Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
 }
 
 Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array<glm::vec3, NUM_VERTS>& rgb)
-    : Primitive()
+    : Primitive(NUM_VERTS, STRIDE, SIZE)
 {
     for (unsigned int i = 0; i < pos.size(); i++)
     {
@@ -26,7 +26,7 @@ Triangle::Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array
 
     glBindVertexArray(vaoID);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertData), vertData, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(GLuint) * vertData.size(), vertData.data(), GL_STATIC_DRAW);
 
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE * sizeof(float), (GLvoid*)0);
@@ -48,13 +48,10 @@ Triangle::~Triangle()
 
 void Triangle::draw(glm::mat4 view) const
 {
-    glm::mat4 model;
-    //model = glm::rotate(model, 45.0f * static_cast<GLfloat>(glfwGetTime()), glm::vec3(1.0f, 0.0f, 0.0f));
-
     glm::mat4 projection;
     projection = glm::perspective(60.0f, static_cast<float>(Engine::width) / Engine::height, 0.1f, 100.0f);
 
-    glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(modelTransform));
     glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -64,56 +61,15 @@ void Triangle::draw(glm::mat4 view) const
     glBindVertexArray(0);
 }
 
-void Triangle::setColor(glm::vec3 rgb, unsigned int index)
+void Triangle::translate(const glm::vec3& amount)
 {
-    if (index >= NUM_VERTS) return;
-
-    vertData[STRIDE * index + 3] = rgb.x;
-    vertData[STRIDE * index + 4] = rgb.y;
-    vertData[STRIDE * index + 5] = rgb.z;
-
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER
-        , sizeof(GLfloat) * (STRIDE * index + 3)
-        , sizeof(GLfloat) * 3
-        , &vertData[STRIDE * index + 3]);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void Triangle::setPosition(glm::vec3 pos, unsigned int index)
-{
-    if (index >= NUM_VERTS) return;
-
-    vertData[STRIDE * index + 0] = pos.x;
-    vertData[STRIDE * index + 1] = pos.y;
-    vertData[STRIDE * index + 2] = pos.z;
-
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER
-        , sizeof(GLfloat) * (STRIDE * index + 0)
-        , sizeof(GLfloat) * 3
-        , &vertData[STRIDE * index + 0]);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-glm::vec3 Triangle::getColor(unsigned int index) const
-{
-    if (index >= NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
-    
-    return {
-        vertData[STRIDE * index + 3],
-        vertData[STRIDE * index + 4],
-        vertData[STRIDE * index + 5]
-    };
-}
-
-glm::vec3 Triangle::getPosition(unsigned int index) const
-{
-    if (index >= NUM_VERTS) return{ 0.0f, 0.0f, 0.0f };
-
-    return{
-        vertData[STRIDE * index + 0],
-        vertData[STRIDE * index + 1],
-        vertData[STRIDE * index + 2]
-    };
+    for (int i = 0; i < NUM_VERTS; i++)
+    {
+        glm::vec3 offsetPosition{
+            vertData[STRIDE * i + 0] + amount.x
+          , vertData[STRIDE * i + 1] + amount.y
+          , vertData[STRIDE * i + 2] + amount.z
+        };
+        setPosition(offsetPosition, i);
+    }
 }

@@ -2,8 +2,16 @@
 #include "Engine.hpp"
 #include <iostream>
 
+Rectangle::Rectangle(const glm::vec3& p1
+                   , const glm::vec3& p2
+                   , const glm::vec3& p3
+                   , const glm::vec3& p4, const glm::vec3& rgb = { 1.0f, 1.0f, 1.0f })
+    : Rectangle({ p1, p2, p3, p4 }, rgb)
+{
+}
+
 Rectangle::Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb)
-    : Primitive()
+    : Primitive(NUM_VERTS, STRIDE, SIZE)
 {
     for (unsigned int i = 0; i < pos.size(); i++)
     {
@@ -49,12 +57,10 @@ Rectangle::~Rectangle()
 
 void Rectangle::draw(glm::mat4 view) const
 {
-    glm::mat4 model;
-
     glm::mat4 projection;
     projection = glm::perspective(60.0f, static_cast<float>(Engine::width) / Engine::height, 0.1f, 100.0f);
 
-    glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(modelUniform, 1, GL_FALSE, glm::value_ptr(modelTransform));
     glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -62,64 +68,17 @@ void Rectangle::draw(glm::mat4 view) const
     glBindVertexArray(vaoID);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-    
 }
 
-void Rectangle::setColor(glm::vec3 rgb, unsigned int index)
+void Rectangle::translate(const glm::vec3& amount)
 {
-    if (index >= NUM_VERTS) return;
-
-    vertData[STRIDE * index + 3] = rgb.x;
-    vertData[STRIDE * index + 4] = rgb.y;
-    vertData[STRIDE * index + 5] = rgb.z;
-
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferSubData(GL_ARRAY_BUFFER
-        , sizeof(GLfloat) * (STRIDE * index + 3)
-        , sizeof(GLfloat) * 3
-        , &vertData[STRIDE * index + 3]);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void Rectangle::setPosition(glm::vec3 pos, unsigned int index)
-{
-    if (index >= NUM_VERTS) return;
-
-    glm::vec3 aboutVertex { vertData[STRIDE * index]
-                          , vertData[STRIDE * index + 1]
-                          , vertData[STRIDE * index + 2] };
-    glm::vec3 offset = pos - aboutVertex;
-
     for (int i = 0; i < NUM_VERTS; i++)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER
-            , sizeof(GLfloat) * (STRIDE * index + 0)
-            , sizeof(GLfloat) * 3
-            , &vertData[STRIDE * index + 0]
-        );
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glm::vec3 offsetPosition{
+            vertData[STRIDE * i + 0] + amount.x
+          , vertData[STRIDE * i + 1] + amount.y
+          , vertData[STRIDE * i + 2] + amount.z
+        };
+        setPosition(offsetPosition, i);
     }
-}
-
-glm::vec3 Rectangle::getColor(unsigned int index) const
-{
-    if (index >= NUM_VERTS) { return glm::vec3(); }
-
-    return {
-        vertData[index * STRIDE + 3],
-        vertData[index * STRIDE + 4],
-        vertData[index * STRIDE + 5]
-    };
-}
-
-glm::vec3 Rectangle::getPosition(unsigned int index) const
-{
-    if (index >= NUM_VERTS) { return glm::vec3(); }
-
-    return{
-        vertData[index * STRIDE + 0],
-        vertData[index * STRIDE + 1],
-        vertData[index * STRIDE + 2]
-    };
 }

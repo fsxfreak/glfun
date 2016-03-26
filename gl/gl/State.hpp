@@ -18,7 +18,7 @@ public:
 	void constructScene();
 	void drawScene(double delta);
 private:
-	std::vector<std::shared_ptr<Primitive>> primitives;
+	std::vector<std::shared_ptr<Entity>> entities;
 
 	Camera camera;
 };

@@ -16,18 +16,18 @@ private:
     const static unsigned int SIZE = NUM_VERTS * STRIDE;
 
 public:
+    Rectangle(const glm::vec3& p1
+            , const glm::vec3& p2
+            , const glm::vec3& p3
+            , const glm::vec3& p4
+            , const glm::vec3& rgb);
     Rectangle(const std::array<glm::vec3, NUM_VERTS>& pos, glm::vec3 rgb);
     ~Rectangle();
 
-    virtual void draw(glm::mat4 view) const;
-    virtual void setColor(glm::vec3 rgb, unsigned int index);
-    virtual void setPosition(glm::vec3 pos, unsigned int index);
-
-    virtual glm::vec3 getColor(unsigned int index) const;
-    virtual glm::vec3 getPosition(unsigned int index) const;
+    virtual void draw(glm::mat4 view) const override;
+    virtual void translate(const glm::vec3& amount) override;
 
 private:
-    std::array<GLfloat, SIZE> vertData;
     std::array<GLuint, 6> indices;
 
     GLuint eboID;

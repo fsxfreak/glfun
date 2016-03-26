@@ -20,15 +20,9 @@ public:
     Triangle(const std::array<glm::vec3, NUM_VERTS>& pos, const std::array<glm::vec3, NUM_VERTS>& rgb);
     ~Triangle();
 
-    virtual void draw(glm::mat4 view) const;
-
-    void setColor(glm::vec3 rgb, unsigned int index);
-    void setPosition(glm::vec3 pos, unsigned int index);
-    glm::vec3 getColor(unsigned int index) const;
-    glm::vec3 getPosition(unsigned int index) const;
+    virtual void draw(glm::mat4 view) const override;
+    virtual void translate(const glm::vec3& amount) override;
 private:
-    GLfloat vertData[SIZE];
-
     GLuint modelUniform;
     GLuint viewUniform;
     GLuint projectionUniform;
