@@ -6,24 +6,32 @@ Prism::Prism(const glm::vec3& b // unshortened variable names in .hpp
            , const float h
            , const glm::vec3& color)
 {
-    glm::vec3 v1{b};
-    glm::vec3 v2{ b.x, b.y, b.z + s };
-    glm::vec3 v3{ b.x + s, b.y, b.z + s };
-    glm::vec3 v4{ b.x + s, b.y, b.z };
-    glm::vec3 v5{ v4 };
-    glm::vec3 v6{ v3 };
-    glm::vec3 v7{ v2 };
-    glm::vec3 v8{ v1 };
+    using glm::vec3;
+
+    vec3 v1{b};
+    vec3 v2{ b.x, b.y, b.z + s };
+    vec3 v3{ b.x + s, b.y, b.z + s };
+    vec3 v4{ b.x + s, b.y, b.z };
+    
+    vec3 v5{ v4 };
+    vec3 v6{ v3 };
+    vec3 v7{ v2 };
+    vec3 v8{ v1 };
+
     v5.y += h;
     v6.y += h;
     v7.y += h;
     v8.y += h;
 
-    sides[BASE] = std::make_unique<Rectangle>(v1, v2, v3, v4, color);
-    sides[LEFT] = std::make_unique<Rectangle>(v1, v4, v5, v8, color);
-    sides[FRONT] = std::make_unique<Rectangle>(v4, v3, v6, v5, color);
-    sides[RIGHT] = std::make_unique<Rectangle>(v3, v2, v7, v6, color);
-    sides[BACK] = std::make_unique<Rectangle>(v2, v1, v8, v7, color);
+    vec3 sideColor1{ color }; sideColor1 *= 0.8f;
+    vec3 sideColor2{ color }; sideColor2 *= 0.6f;
+    vec3 baseColor { color };  baseColor *= 0.2f;
+
+    sides[BASE] = std::make_unique<Rectangle>(v1, v2, v3, v4, baseColor);
+    sides[LEFT] = std::make_unique<Rectangle>(v1, v4, v5, v8, sideColor1);
+    sides[FRONT] = std::make_unique<Rectangle>(v4, v3, v6, v5, sideColor2);
+    sides[RIGHT] = std::make_unique<Rectangle>(v3, v2, v7, v6, sideColor1);
+    sides[BACK] = std::make_unique<Rectangle>(v2, v1, v8, v7, sideColor2);
     sides[TOP] = std::make_unique<Rectangle>(v5, v6, v7, v8, color);
 }
 
